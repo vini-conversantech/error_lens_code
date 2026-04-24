@@ -1,4 +1,5 @@
-import { app, BrowserWindow, ipcMain, dialog, shell, Menu, globalShortcut, nativeTheme } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, shell, Menu, globalShortcut, nativeTheme, protocol, net } from 'electron'
+import { pathToFileURL } from 'url'
 import path from 'path'
 import fs from 'fs'
 import log from 'electron-log'
@@ -24,6 +25,11 @@ process.on('uncaughtException', (error) => {
 process.on('unhandledRejection', (reason) => {
   log.error('Unhandled Rejection:', reason)
 })
+
+// Register privileged schemes
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'media', privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true, bypassCSP: true } }
+])
 
 let mainWindow: BrowserWindow | null = null
 let db: Database.Database | null = null
@@ -249,6 +255,34 @@ ipcMain.handle('fs:readFile', async (_, filePath: string) => {
     return { success: false, error: error.message }
   }
 })
+
+ipcMain.handle('fs:readMedia', async (_, filePath: string) => {
+  try {
+    const buffer = fs.readFileSync(filePath)
+    const ext = path.extname(filePath).toLowerCase().slice(1)
+    
+    const mimeMap: Record<string, string> = {
+      'png': 'image/png',
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'gif': 'image/gif',
+      'webp': 'image/webp',
+      'svg': 'image/svg+xml',
+      'mp4': 'video/mp4',
+      'webm': 'video/webm',
+      'ogg': 'video/ogg',
+      'mov': 'video/quicktime'
+    }
+    
+    const mimeType = mimeMap[ext] || 'application/octet-stream'
+    const base64 = buffer.toString('base64')
+    return { success: true, content: `data:${mimeType};base64,${base64}` }
+  } catch (error: any) {
+    log.error('Error reading media:', error)
+    return { success: false, error: error.message }
+  }
+})
+
 
 ipcMain.handle('fs:writeFile', async (_, filePath: string, content: string) => {
   try {
@@ -520,6 +554,30 @@ ipcMain.handle('window:isMaximized', () => {
 // App lifecycle
 app.whenReady().then(() => {
   log.info('App ready')
+  
+  // Register media protocol for local files
+  protocol.handle('media', (request) => {
+    try {
+      const url = new URL(request.url)
+      // On Windows, the path might start with / followed by drive letter
+      let filePath = decodeURIComponent(url.pathname)
+      
+      // Remove leading slash if it precedes a drive letter on Windows (e.g. /C:/...)
+      if (process.platform === 'win32' && filePath.startsWith('/')) {
+        filePath = filePath.slice(1)
+      }
+      
+      // If the URL was constructed as media://C:/path, the pathname is C:/path
+      // If it was media:///C:/path, the pathname is /C:/path
+      
+      log.debug('Loading media file:', filePath)
+      return net.fetch(pathToFileURL(filePath).toString())
+    } catch (error) {
+      log.error('Protocol handler error:', error)
+      return new Response('Invalid path', { status: 400 })
+    }
+  })
+
   initDatabase()
   createWindow()
   registerShortcuts()

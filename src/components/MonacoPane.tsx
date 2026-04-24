@@ -3,6 +3,7 @@ import Editor, { OnMount, OnChange } from '@monaco-editor/react'
 import { useEditorStore } from '../store/editorStore'
 import { useAppStore } from '../store/appStore'
 import * as monaco from 'monaco-editor'
+import MediaViewer from './MediaViewer'
 
 // Configure Monaco workers
 self.MonacoEnvironment = {
@@ -165,6 +166,10 @@ export default function MonacoPane() {
         </div>
       </div>
     )
+  }
+
+  if (activeTab.type === 'image' || activeTab.type === 'video') {
+    return <MediaViewer tab={activeTab} />
   }
 
   return (

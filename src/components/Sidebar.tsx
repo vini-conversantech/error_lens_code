@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useAppStore, FileItem } from '../store/appStore'
-import { useEditorStore, detectLanguage } from '../store/editorStore'
+import { useEditorStore, detectLanguage, getFileType } from '../store/editorStore'
 import { v4 as uuidv4 } from 'uuid'
 import {
   ChevronRight,
@@ -120,6 +120,20 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
     if (item.isDirectory) {
       toggleFolder(item.path)
     } else {
+      const fileType = getFileType(item.name)
+      if (fileType !== 'text') {
+        addTab({
+          id: uuidv4(),
+          path: item.path,
+          name: item.name,
+          content: '', // No content for media
+          language: 'media',
+          isDirty: false,
+          type: fileType
+        })
+        return
+      }
+      
       try {
         const result = await window.electronAPI.readFile(item.path)
         if (result.success && result.content !== undefined) {
@@ -129,7 +143,8 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
             name: item.name,
             content: result.content,
             language: detectLanguage(item.name),
-            isDirty: false
+            isDirty: false,
+            type: 'text'
           })
         }
       } catch (error) {

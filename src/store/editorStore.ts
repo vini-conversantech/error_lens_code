@@ -125,3 +125,13 @@ export function detectLanguage(filename: string): string {
   
   return languageMap[ext] || 'plaintext'
 }
+
+export function getFileType(filename: string): 'text' | 'image' | 'video' {
+  const ext = filename.split('.').pop()?.toLowerCase() || ''
+  const imageExts = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'ico', 'svg']
+  const videoExts = ['mp4', 'webm', 'ogg', 'mov']
+  
+  if (imageExts.includes(ext)) return 'image'
+  if (videoExts.includes(ext)) return 'video'
+  return 'text'
+}

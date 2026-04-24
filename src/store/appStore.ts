@@ -16,6 +16,7 @@ export interface Tab {
   content: string
   language: string
   isDirty: boolean
+  type: 'text' | 'image' | 'video'
 }
 
 export interface GitStatus {

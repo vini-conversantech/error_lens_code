@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // File System
   openFolder: () => ipcRenderer.invoke('dialog:openFolder'),
   readFile: (filePath: string) => ipcRenderer.invoke('fs:readFile', filePath),
+  readMedia: (filePath: string) => ipcRenderer.invoke('fs:readMedia', filePath),
   writeFile: (filePath: string, content: string) => ipcRenderer.invoke('fs:writeFile', filePath, content),
   listFiles: (dirPath: string) => ipcRenderer.invoke('fs:listFiles', dirPath),
   createFile: (filePath: string) => ipcRenderer.invoke('fs:createFile', filePath),
@@ -81,6 +82,7 @@ export interface ElectronAPI {
   // File System
   openFolder: () => Promise<string | null>
   readFile: (filePath: string) => Promise<{ success: boolean; content?: string; error?: string }>
+  readMedia: (filePath: string) => Promise<{ success: boolean; content?: string; error?: string }>
   writeFile: (filePath: string, content: string) => Promise<{ success: boolean; error?: string }>
   listFiles: (dirPath: string) => Promise<{ success: boolean; items?: Array<{ name: string; path: string; isDirectory: boolean }>; error?: string }>
   createFile: (filePath: string) => Promise<{ success: boolean; error?: string }>
