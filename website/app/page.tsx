@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Download, Cpu, Code2, Zap, ShieldCheck, 
+import {
+  Download, Cpu, Code2, Zap, ShieldCheck,
   Github, Twitter, MessageSquare, ChevronRight,
   Globe, Layout, Sparkles, Terminal
 } from 'lucide-react'
@@ -79,7 +79,7 @@ export default function LandingPage() {
             </div>
             <span className="text-xl font-bold tracking-tight text-white hidden sm:block">ErrorLens Code</span>
           </div>
-          
+
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
             <a href="#" className="hover:text-primary transition-colors">Documentation</a>
@@ -146,9 +146,9 @@ export default function LandingPage() {
               </div>
               <div className="mt-10 aspect-video rounded-xl bg-background border border-white/5 flex items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 opacity-20 pointer-events-none">
-                   <div className="w-full h-full p-8 font-mono text-[10px] text-primary/40 leading-relaxed overflow-hidden">
-                      {`import { createRoot } from 'react-dom/client';\nimport App from './App';\n\nconst root = createRoot(document.getElementById('root'));\nroot.render(<App />);\n\n// ErrorLens optimized render sequence\nfunction initializeIDE() {\n  console.log('AntiGravity Core Active');\n  // ... boot sequence` }
-                   </div>
+                  <div className="w-full h-full p-8 font-mono text-[10px] text-primary/40 leading-relaxed overflow-hidden">
+                    {`import { createRoot } from 'react-dom/client';\nimport App from './App';\n\nconst root = createRoot(document.getElementById('root'));\nroot.render(<App />);\n\n// ErrorLens optimized render sequence\nfunction initializeIDE() {\n  console.log('Error LEns Core Active');\n  // ... boot sequence`}
+                  </div>
                 </div>
                 <Code2 className="w-20 h-20 text-white/10" />
                 <div className="absolute bottom-8 right-8 flex items-center gap-3 px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg animate-bounce">
@@ -157,7 +157,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Floating Badges */}
             <div className="absolute -top-10 -left-10 w-20 h-20 bg-accent/20 rounded-full blur-2xl animate-pulse" />
             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/20 rounded-full blur-3xl animate-pulse" />
@@ -172,7 +172,7 @@ export default function LandingPage() {
             <h2 className="text-3xl sm:text-5xl font-bold text-white mb-4">Built for the next decade.</h2>
             <p className="text-muted text-lg">Every detail engineered for professional performance.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((f, i) => (
               <motion.div
@@ -195,13 +195,13 @@ export default function LandingPage() {
       <footer className="py-20 px-6 border-t border-white/5 mt-auto">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
           <div className="flex flex-col items-center md:items-start gap-4">
-             <div className="flex items-center gap-3">
-               <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                 <span className="text-primary font-bold text-sm">EL</span>
-               </div>
-               <span className="text-lg font-bold text-white">ErrorLens Code</span>
-             </div>
-             <p className="text-xs text-muted">© 2026 DeepMind Advanced Agentic Coding. All rights reserved.</p>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                <span className="text-primary font-bold text-sm">EL</span>
+              </div>
+              <span className="text-lg font-bold text-white">ErrorLens Code</span>
+            </div>
+            <p className="text-xs text-muted">© 2026 DeepMind Advanced Agentic Coding. All rights reserved.</p>
           </div>
 
           <div className="flex items-center gap-6">

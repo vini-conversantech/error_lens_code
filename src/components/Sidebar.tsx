@@ -2,10 +2,10 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { useAppStore, FileItem } from '../store/appStore'
 import { useEditorStore, detectLanguage } from '../store/editorStore'
 import { v4 as uuidv4 } from 'uuid'
-import { 
-  ChevronRight, 
-  ChevronDown, 
-  Folder, 
+import {
+  ChevronRight,
+  ChevronDown,
+  Folder,
   FolderOpen,
   Search,
   Settings,
@@ -13,8 +13,11 @@ import {
   Plus,
   RefreshCw,
   MinusSquare,
-  Library
+  Library,
+  MoreHorizontal,
+  Clock
 } from 'lucide-react'
+import { VscNewFile, VscNewFolder, VscCollapseAll, VscRefresh, VscEllipsis } from 'react-icons/vsc'
 import FileIcon from './FileIcon'
 
 interface SidebarProps {
@@ -35,7 +38,7 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
     placeholder: string;
     defaultValue: string;
     onResolve: (value: string | null) => void;
-  }>({ isOpen: false, title: '', placeholder: '', defaultValue: '', onResolve: () => {} });
+  }>({ isOpen: false, title: '', placeholder: '', defaultValue: '', onResolve: () => { } });
 
   const getPromptValue = (title: string, placeholder: string, defaultValue: string = ''): Promise<string | null> => {
     return new Promise((resolve) => {
@@ -72,7 +75,7 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
       document.removeEventListener('mouseup', handleMouseUp)
     }
   }, [isResizing])
-  
+
   const toggleFolder = useCallback(async (path: string) => {
     const newExpanded = new Set(expandedPaths)
     if (newExpanded.has(path)) {
@@ -91,7 +94,7 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
               children: item.isDirectory ? [] : undefined,
               isExpanded: false
             }))
-          
+
           setFiles(files => {
             const updateChildren = (items: FileItem[]): FileItem[] => {
               return items.map(item => {
@@ -112,7 +115,7 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
     }
     setExpandedPaths(newExpanded)
   }, [expandedPaths, setFiles])
-  
+
   const handleFileClick = useCallback(async (item: FileItem) => {
     if (item.isDirectory) {
       toggleFolder(item.path)
@@ -134,40 +137,40 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
       }
     }
   }, [addTab, toggleFolder])
-  
+
   const handleCollapseAll = () => {
     setExpandedPaths(new Set())
   }
-  
+
   const handleContextMenu = (e: React.MouseEvent, item: FileItem) => {
     e.preventDefault()
     setContextMenu({ x: e.clientX, y: e.clientY, path: item.path, isDirectory: item.isDirectory })
   }
-  
+
   const handleCreateFile = async () => {
     if (!contextMenu) return
     const name = await getPromptValue('New File', 'Enter file name (e.g., index.ts)')
     if (name) {
-      const newPath = contextMenu.isDirectory 
+      const newPath = contextMenu.isDirectory
         ? `${contextMenu.path}/${name}`
         : `${workspacePath}/${name}`
       await window.electronAPI.createFile(newPath)
       setContextMenu(null)
     }
   }
-  
+
   const handleCreateFolder = async () => {
     if (!contextMenu) return
     const name = await getPromptValue('New Folder', 'Enter folder name (e.g., components)')
     if (name) {
-      const newPath = contextMenu.isDirectory 
+      const newPath = contextMenu.isDirectory
         ? `${contextMenu.path}/${name}`
         : `${workspacePath}/${name}`
       await window.electronAPI.createDirectory(newPath)
       setContextMenu(null)
     }
   }
-  
+
   const handleDelete = async () => {
     if (!contextMenu) return
     if (confirm('Are you sure you want to delete this?')) {
@@ -175,7 +178,7 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
       setContextMenu(null)
     }
   }
-  
+
   const handleRefresh = async () => {
     if (workspacePath) {
       const result = await window.electronAPI.listFiles(workspacePath)
@@ -190,11 +193,11 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
       }
     }
   }
-  
-  const filteredFiles = searchQuery 
+
+  const filteredFiles = searchQuery
     ? filterFiles(files, searchQuery.toLowerCase())
     : files
-  
+
   const renderFileTree = (items: FileItem[], depth: number = 0) => {
     // Sort: directories first, then files, both alphabetically
     const sorted = [...items].sort((a, b) => {
@@ -241,38 +244,25 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
       )
     })
   }
-  
+
   return (
     <div style={{ width }} className="relative h-full bg-panel border-r border-border flex flex-col shrink-0 overflow-x-hidden">
-      <div 
+      <div
         className="absolute top-0 right-[-3px] w-[6px] h-full cursor-col-resize z-50 hover:bg-primary/50 active:bg-primary transition-colors"
         onMouseDown={(e) => {
           e.preventDefault()
           setIsResizing(true)
         }}
       />
-      
+
       {/* Explorer Header */}
-      <div className="px-3 py-2 border-b border-border">
-        <span className="text-[11px] font-semibold text-muted uppercase tracking-wider">Explorer</span>
+      <div className="px-4 py-2.5 flex items-center justify-between">
+        <span className="text-[11px] font-medium text-muted uppercase tracking-wider">Explorer</span>
+        <VscEllipsis className="w-4 h-4 text-muted cursor-pointer hover:text-text transition-colors" />
       </div>
-      
-      {/* Search */}
-      <div className="px-3 py-2 border-b border-border">
-        <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted" />
-          <input
-            type="text"
-            placeholder="Search files..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-background border border-border rounded-md pl-8 pr-2 py-1.5 text-[12px] outline-none focus:border-primary/50 transition-colors placeholder:text-muted/60"
-          />
-        </div>
-      </div>
-      
+
       {/* File tree */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden py-1">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden pt-1">
         {workspacePath ? (
           <>
             {/* Project folder name with actions */}
@@ -284,39 +274,39 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
                 </span>
               </div>
               <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button 
+                <button
                   onClick={() => {
                     setContextMenu({ x: 60, y: 120, path: workspacePath, isDirectory: true })
                     handleCreateFile()
                   }}
-                  className="p-0.5 hover:bg-white/10 rounded"
+                  className="p-1 hover:bg-white/10 rounded flex items-center justify-center"
                   title="New File"
                 >
-                  <Plus className="w-3.5 h-3.5 text-muted" />
+                  <VscNewFile className="w-4 h-4 text-muted" />
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     setContextMenu({ x: 60, y: 120, path: workspacePath, isDirectory: true })
                     handleCreateFolder()
                   }}
-                  className="p-0.5 hover:bg-white/10 rounded"
+                  className="p-1 hover:bg-white/10 rounded flex items-center justify-center"
                   title="New Folder"
                 >
-                  <Folder className="w-3.5 h-3.5 text-muted" />
+                  <VscNewFolder className="w-4 h-4 text-muted" />
                 </button>
-                <button 
+                <button
                   onClick={handleRefresh}
-                  className="p-1 hover:bg-white/10 rounded transition-colors"
+                  className="p-1 hover:bg-white/10 rounded flex items-center justify-center"
                   title="Refresh Explorer"
                 >
-                  <RefreshCw className="w-3.5 h-3.5 text-muted" />
+                  <VscRefresh className="w-4 h-4 text-muted" />
                 </button>
-                <button 
+                <button
                   onClick={handleCollapseAll}
-                  className="p-1 hover:bg-white/10 rounded transition-colors"
+                  className="p-1 hover:bg-white/10 rounded flex items-center justify-center"
                   title="Collapse All Folders"
                 >
-                  <MinusSquare className="w-3.5 h-3.5 text-muted" />
+                  <VscCollapseAll className="w-4 h-4 text-muted" />
                 </button>
               </div>
             </div>
@@ -331,7 +321,7 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
           </div>
         )}
       </div>
-      
+
       {/* Git branch indicator */}
       {gitStatus?.isRepo && (
         <div className="px-3 py-2 border-t border-border">
@@ -347,26 +337,26 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
           </div>
         </div>
       )}
-      
+
       {/* Settings */}
       <div className="px-3 py-2 border-t border-border">
-        <button 
-          onClick={() => useAppStore.getState().setSettingsOpen(true)}
+        <button
+          // onClick={() => useAppStore.getState().setSettingsOpen(true)}
           className="flex items-center gap-1.5 text-muted hover:text-text transition-colors w-full"
         >
-          <Settings className="w-3 h-3" />
-          <span className="text-[11px]">Settings</span>
+          <Clock className="w-3 h-3" />
+          <span className="text-[11px]">Timeline</span>
         </button>
       </div>
-      
+
       {/* Context menu - fixed positioning with boundary checks */}
       {contextMenu && (
         <>
-          <div 
-            className="fixed inset-0 z-[100]" 
+          <div
+            className="fixed inset-0 z-[100]"
             onClick={() => setContextMenu(null)}
           />
-          <div 
+          <div
             className="fixed z-[101] min-w-[180px] bg-panel border border-border rounded-lg shadow-2xl py-1 backdrop-blur-xl"
             style={{ left: contextMenu.x, top: contextMenu.y }}
           >
@@ -385,7 +375,7 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
                 <div className="h-px bg-border my-1 mx-2" />
               </>
             )}
-            
+
             <div className="flex items-center gap-2 px-3 py-1.5 text-[11px] text-text hover:bg-white/5 cursor-pointer transition-colors" onClick={() => {
               window.electronAPI.showItemInFolder?.(contextMenu.path)
               setContextMenu(null)
@@ -394,7 +384,7 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
               <span>Reveal in Finder</span>
               <span className="ml-auto text-[9px] text-muted/50">⌥⌘R</span>
             </div>
-            
+
             <div className="flex items-center gap-2 px-3 py-1.5 text-[11px] text-text hover:bg-white/5 cursor-pointer transition-colors" onClick={() => {
               navigator.clipboard.writeText(contextMenu.path)
               setContextMenu(null)
@@ -450,7 +440,7 @@ export default function Sidebar({ onOpenFolder }: SidebarProps) {
 
 function filterFiles(items: FileItem[], query: string): FileItem[] {
   const result: FileItem[] = []
-  
+
   for (const item of items) {
     if (item.name.toLowerCase().includes(query)) {
       result.push(item)
@@ -461,6 +451,6 @@ function filterFiles(items: FileItem[], query: string): FileItem[] {
       }
     }
   }
-  
+
   return result
 }

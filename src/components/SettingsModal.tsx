@@ -102,7 +102,7 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-panel shrink-0">
           <div className="flex items-center gap-3 pt-6">
             <Settings className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-semibold text-text">Preferences</h2>
+            <h2 className="text-lg font-semibold text-text">Settings</h2>
           </div>
           <button
             onClick={() => setSettingsOpen(false)}
@@ -144,7 +144,7 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
                 <div className="space-y-8 animate-in slide-in-from-bottom-2 duration-300">
                   <header>
                     <h1 className="text-2xl font-bold text-text mb-2">AI Capabilities</h1>
-                    <p className="text-sm text-muted">Configure how the AntiGravity agent interacts with your codebase.</p>
+                    <p className="text-sm text-muted">Configure how the Errorlens code agent interacts with your codebase.</p>
                   </header>
 
                   <div className="space-y-6">

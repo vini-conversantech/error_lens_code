@@ -2,6 +2,7 @@ import { useEffect, useCallback } from 'react'
 import { useAppStore } from './store/appStore'
 import { useEditorStore } from './store/editorStore'
 import Sidebar from './components/Sidebar'
+import ActivityBar from './components/ActivityBar'
 import Topbar from './components/Topbar'
 import MonacoPane from './components/MonacoPane'
 import EditorTabs from './components/EditorTabs'
@@ -232,6 +233,9 @@ function App() {
       
       {/* Main content */}
       <div className="flex-1 flex overflow-hidden">
+        {/* Activity Bar */}
+        <ActivityBar />
+        
         {/* Left Sidebar */}
         {leftSidebarOpen && (
           <Sidebar onOpenFolder={handleOpenFolder} />

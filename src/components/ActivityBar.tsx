@@ -1,58 +1,64 @@
-import { Files, Search, GitBranch, Play, Settings, User } from 'lucide-react'
+import React from 'react'
+import { 
+  VscFiles, 
+  VscSearch, 
+  VscSourceControl, 
+  VscDebugAlt, 
+  VscExtensions,
+  VscAccount,
+  VscSettingsGear
+} from 'react-icons/vsc'
 import { useAppStore } from '../store/appStore'
 
 export default function ActivityBar() {
-  const { leftSidebarOpen, toggleLeftSidebar, setSettingsOpen } = useAppStore()
+  const { toggleLeftSidebar, setSettingsOpen } = useAppStore()
+
+  const topIcons = [
+    { id: 'explorer', icon: VscFiles, label: 'Explorer', active: true },
+    { id: 'search', icon: VscSearch, label: 'Search' },
+    { id: 'git', icon: VscSourceControl, label: 'Source Control' },
+    { id: 'debug', icon: VscDebugAlt, label: 'Run and Debug' },
+    { id: 'extensions', icon: VscExtensions, label: 'Extensions' },
+  ]
+
+  const bottomIcons = [
+    { id: 'account', icon: VscAccount, label: 'Account' },
+    { id: 'settings', icon: VscSettingsGear, label: 'Settings', onClick: () => setSettingsOpen(true) },
+  ]
 
   return (
-    <div className="w-12 md:w-14 h-full bg-background border-r border-border flex flex-col items-center py-4 flex-shrink-0 z-10">
-      {/* Top icons */}
-      <div className="flex flex-col gap-4 w-full items-center">
-        <button 
-          onClick={toggleLeftSidebar}
-          className={`p-2 rounded-xl transition-all ${leftSidebarOpen ? 'text-primary border-l-2 border-primary bg-primary/5' : 'text-muted border-l-2 border-transparent hover:text-text hover:bg-white/5'}`}
-          title="Explorer"
-        >
-          <Files className="w-[1.4rem] h-[1.4rem] stroke-[1.5]" />
-        </button>
-        <button 
-          className="p-2 rounded-xl text-muted border-l-2 border-transparent hover:text-text hover:bg-white/5 transition-all"
-          title="Search"
-        >
-          <Search className="w-[1.4rem] h-[1.4rem] stroke-[1.5]" />
-        </button>
-        <button 
-          className="p-2 rounded-xl text-muted border-l-2 border-transparent hover:text-text hover:bg-white/5 transition-all"
-          title="Source Control"
-        >
-          <GitBranch className="w-[1.4rem] h-[1.4rem] stroke-[1.5]" />
-        </button>
-        <button 
-          className="p-2 rounded-xl text-muted border-l-2 border-transparent hover:text-text hover:bg-white/5 transition-all"
-          title="Run and Debug"
-        >
-          <Play className="w-[1.4rem] h-[1.4rem] stroke-[1.5]" />
-        </button>
+    <div className="w-[48px] h-full bg-panel flex flex-col items-center py-2 border-r border-border select-none">
+      <div className="flex-1 flex flex-col gap-1 w-full items-center">
+        {topIcons.map((item) => (
+          <div
+            key={item.id}
+            title={item.label}
+            className={`relative group p-3 cursor-pointer transition-all duration-200 ${
+              item.active 
+                ? 'text-text' 
+                : 'text-muted hover:text-text'
+            }`}
+            onClick={item.id === 'explorer' ? toggleLeftSidebar : undefined}
+          >
+            {item.active && (
+              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />
+            )}
+            <item.icon className="w-6 h-6" />
+          </div>
+        ))}
       </div>
 
-      {/* Bottom spacer */}
-      <div className="flex-1" />
-
-      {/* Bottom icons */}
-      <div className="flex flex-col gap-4 w-full items-center">
-        <button 
-          className="p-2 rounded-xl text-muted hover:text-text hover:bg-white/5 transition-all"
-          title="Accounts"
-        >
-          <User className="w-[1.4rem] h-[1.4rem] stroke-[1.5]" />
-        </button>
-        <button 
-          onClick={() => setSettingsOpen(true)}
-          className="p-2 rounded-xl text-muted hover:text-text hover:bg-white/5 transition-all"
-          title="Settings"
-        >
-          <Settings className="w-[1.4rem] h-[1.4rem] stroke-[1.5]" />
-        </button>
+      <div className="flex flex-col gap-1 w-full items-center pb-2">
+        {bottomIcons.map((item) => (
+          <div
+            key={item.id}
+            title={item.label}
+            className="p-3 cursor-pointer text-muted hover:text-text transition-all duration-200"
+            onClick={item.onClick}
+          >
+            <item.icon className="w-6 h-6" />
+          </div>
+        ))}
       </div>
     </div>
   )

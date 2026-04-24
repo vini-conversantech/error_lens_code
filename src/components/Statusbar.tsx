@@ -10,9 +10,9 @@ export default function Statusbar() {
   const { tabs, activeTabId, cursorPosition } = useEditorStore()
   const { isStreaming } = useChatStore()
   const [ollamaConnected, setOllamaConnected] = useState(false)
-  
+
   const activeTab = tabs.find(t => t.id === activeTabId)
-  
+
   // Check Ollama connection on mount
   useEffect(() => {
     checkOllamaConnection().then(setOllamaConnected)
@@ -48,7 +48,7 @@ export default function Statusbar() {
     }
     return displayMap[lang] || lang.charAt(0).toUpperCase() + lang.slice(1)
   }
-  
+
   return (
     <div className="h-[22px] bg-[#0D1117] border-t border-border flex items-center px-3 text-[10px] text-muted select-none">
       {/* Left section */}
@@ -66,7 +66,7 @@ export default function Statusbar() {
             )}
           </div>
         )}
-        
+
         {/* Errors/Warnings count */}
         <div className="flex items-center gap-2 hover:text-text cursor-pointer transition-colors">
           <div className="flex items-center gap-0.5">
@@ -79,10 +79,10 @@ export default function Statusbar() {
           </div>
         </div>
       </div>
-      
+
       {/* Spacer */}
       <div className="flex-1" />
-      
+
       {/* Right section */}
       <div className="flex items-center gap-3">
         {/* Cursor position */}
@@ -91,28 +91,28 @@ export default function Statusbar() {
             Ln {cursorPosition?.line || 1}, Col {cursorPosition?.column || 1}
           </span>
         )}
-        
+
         {/* Indentation */}
         {activeTab && (
           <span className="hover:text-text cursor-pointer transition-colors">
             Spaces: 2
           </span>
         )}
-        
+
         {/* Encoding */}
         {activeTab && (
           <span className="hover:text-text cursor-pointer transition-colors">
             UTF-8
           </span>
         )}
-        
+
         {/* Line ending */}
         {activeTab && (
           <span className="hover:text-text cursor-pointer transition-colors">
             LF
           </span>
         )}
-        
+
         {/* Language */}
         {activeTab && (
           <span className="hover:text-text cursor-pointer transition-colors">
@@ -126,14 +126,10 @@ export default function Statusbar() {
         {/* AI Status */}
         <div className="flex items-center gap-1 hover:text-text cursor-pointer transition-colors">
           <Sparkles className={`w-3 h-3 ${isStreaming ? 'text-primary animate-pulse' : ''}`} />
-          <span>{isStreaming ? 'AI Thinking...' : 'Antigravity'}</span>
+          <span>{isStreaming ? 'AI Thinking...' : 'ErrorLens'}</span>
         </div>
 
-        {/* Settings shortcut */}
-        <span className="hover:text-text cursor-pointer transition-colors" onClick={() => useAppStore.getState().setSettingsOpen(true)}>
-          Settings
-        </span>
-        
+
         {/* Ollama status */}
         <div className="flex items-center gap-1">
           <Circle className={`w-2 h-2 ${ollamaConnected ? 'fill-success text-success' : 'fill-muted text-muted'}`} />

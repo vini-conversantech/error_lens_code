@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ErrorLens Code | The Antigravity IDE",
+  title: "ErrorLens Code",
   description: "Next-Generation Desktop IDE designed for maximum speed and intelligence. Experience zero-latency coding with integrated AI.",
 };
 
