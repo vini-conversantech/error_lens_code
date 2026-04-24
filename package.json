@@ -1,0 +1,77 @@
+{
+  "name": "error-lens-code",
+  "version": "1.0.0",
+  "description": "AI-first desktop coding IDE - ErrorLens Code",
+  "main": "dist-electron/main.js",
+  "author": "ErrorLens Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "ELECTRON=true tsc && ELECTRON=true vite build && electron-builder",
+    "build:vite": "ELECTRON=true tsc && ELECTRON=true vite build",
+    "preview": "vite preview",
+    "electron:dev": "ELECTRON=true vite",
+    "electron:build": "npm run build:vite && electron-builder"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "@tanstack/react-query": "^5.17.0",
+    "better-sqlite3": "^9.4.3",
+    "electron-log": "^5.1.1",
+    "electron-store": "^8.1.0",
+    "file-icons-js": "^1.1.0",
+    "lucide-react": "^0.312.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.6.0",
+    "react-markdown": "^9.0.1",
+    "rehype-highlight": "^7.0.0",
+    "remark-gfm": "^4.0.0",
+    "simple-git": "^3.22.0",
+    "uuid": "^9.0.1",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/node": "^20.11.5",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@types/uuid": "^9.0.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "concurrently": "^8.2.2",
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.1",
+    "electron-rebuild": "^3.2.9",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vite-plugin-electron": "^0.28.0",
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.errorlens.code",
+    "productName": "ErrorLens Code",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "identity": null,
+      "hardenedRuntime": false,
+      "target": "dmg",
+      "icon": "public/assets/logo.png"
+    },
+    "win": {
+      "target": "nsis",
+      "sign": false,
+      "icon": "public/assets/logo.png"
+    }
+  }
+}

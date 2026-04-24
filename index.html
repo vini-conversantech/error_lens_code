@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com ws://localhost:* http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:;">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>ErrorLens Code</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Mock electronAPI for browser preview
+      if (!window.electronAPI) {
+        window.electronAPI = {
+          getSetting: async (key) => ({ success: true, value: localStorage.getItem(key) }),
+          setSetting: async (key, value) => { localStorage.setItem(key, value); return { success: true }; },
+          dbQuery: async () => ({ success: true, data: [] }),
+          dbRun: async () => ({ success: true }),
+          listFiles: async () => ({ success: true, items: [] }),
+          readFile: async () => ({ success: true, content: '// Web Preview Mode\n// Open a folder to start' }),
+          writeFile: async () => ({ success: true }),
+          gitStatus: async () => ({ success: true, isRepo: false }),
+          onMenuOpenFolder: () => () => {},
+          onMenuSave: () => () => {},
+          onMenuAskAI: () => () => {},
+          onMenuCommandPalette: () => () => {},
+          minimize: async () => {},
+          maximize: async () => {},
+          close: async () => {},
+          isMaximized: async () => false,
+          getPath: async () => '/mock/path',
+          getVersion: async () => '1.0.0-mock'
+        };
+      }
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

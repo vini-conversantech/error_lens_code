@@ -1,0 +1,272 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #070B10;
+  color: #EAF2FF;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0E131A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2A313C;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3A414C;
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(18, 25, 35, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-hover:hover {
+  background: rgba(18, 25, 35, 0.95);
+  border-color: rgba(79, 140, 255, 0.3);
+  box-shadow: 0 0 20px rgba(79, 140, 255, 0.15);
+}
+
+/* Glow effects */
+.glow-primary {
+  box-shadow: 0 0 20px rgba(79, 140, 255, 0.3);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.glow-violet {
+  box-shadow: 0 0 20px rgba(139, 92, 255, 0.3);
+}
+
+/* Transitions */
+.transition-all-200 {
+  transition: all 0.2s ease-out;
+}
+
+/* Monaco editor overrides */
+.monaco-editor {
+  /* Removed border-radius to prevent bad canvas clipping */
+}
+
+/* File tree */
+.file-tree-item {
+  @apply flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer transition-all-200;
+}
+
+.file-tree-item:hover {
+  @apply bg-white/5;
+}
+
+.file-tree-item.active {
+  @apply bg-primary/20 text-primary;
+}
+
+/* Chat messages */
+.chat-user {
+  @apply bg-primary/10 border border-primary/20 rounded-2xl rounded-br-sm;
+}
+
+.chat-ai {
+  @apply bg-panel border border-border rounded-2xl rounded-bl-sm;
+}
+
+/* Button styles */
+.btn-primary {
+  @apply px-4 py-2 bg-primary text-white rounded-xl font-medium transition-all-200;
+  @apply hover:shadow-glow hover:scale-[1.02] active:scale-[0.98];
+}
+
+.btn-secondary {
+  @apply px-4 py-2 bg-card text-text rounded-xl font-medium border border-border transition-all-200;
+  @apply hover:border-primary/50 hover:bg-primary/5;
+}
+
+.btn-ghost {
+  @apply px-3 py-1.5 text-muted rounded-lg transition-all-200;
+  @apply hover:text-text hover:bg-white/5;
+}
+
+/* Input styles */
+.input-field {
+  @apply w-full px-4 py-2.5 bg-card border border-border rounded-xl text-text;
+  @apply placeholder:text-muted focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20;
+  @apply transition-all-200;
+}
+
+/* Panel styles */
+.panel {
+  @apply bg-panel border border-border rounded-18px;
+}
+
+/* Tab styles */
+.tab {
+  @apply px-4 py-2 text-muted cursor-pointer transition-all-200 border-b-2 border-transparent;
+  @apply hover:text-text;
+}
+
+.tab.active {
+  @apply text-primary border-primary;
+}
+
+/* Status indicator */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-dot.online {
+  @apply bg-success animate-pulse;
+}
+
+.status-dot.offline {
+  @apply bg-muted;
+}
+
+.status-dot.error {
+  @apply bg-error;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply bg-card animate-pulse rounded;
+}
+
+/* Markdown styles */
+.markdown-content {
+  @apply text-text leading-relaxed;
+}
+
+.markdown-content h1 {
+  @apply text-xl font-semibold mb-3 mt-4;
+}
+
+.markdown-content h2 {
+  @apply text-lg font-semibold mb-2 mt-3;
+}
+
+.markdown-content h3 {
+  @apply text-base font-medium mb-2 mt-2;
+}
+
+.markdown-content p {
+  @apply mb-3;
+}
+
+.markdown-content ul, .markdown-content ol {
+  @apply mb-3 pl-6;
+}
+
+.markdown-content li {
+  @apply mb-1;
+}
+
+.markdown-content code {
+  @apply px-1.5 py-0.5 bg-card rounded text-sm font-mono text-cyan-glow;
+}
+
+.markdown-content pre {
+  @apply mb-3 p-4 bg-card rounded-xl overflow-x-auto;
+}
+
+.markdown-content pre code {
+  @apply p-0 bg-transparent;
+}
+
+.markdown-content a {
+  @apply text-primary hover:underline;
+}
+
+.markdown-content blockquote {
+  @apply border-l-4 border-primary/50 pl-4 italic text-muted;
+}
+
+/* Diff viewer */
+.diff-added {
+  @apply bg-success/10 border-l-4 border-success;
+}
+
+.diff-removed {
+  @apply bg-error/10 border-l-4 border-error;
+}
+
+.diff-modified {
+  @apply bg-warning/10 border-l-4 border-warning;
+}
+
+/* Error lens */
+.error-lens {
+  @apply absolute z-50 p-4 bg-card border border-error/30 rounded-xl shadow-lg;
+  @apply animate-fade-in;
+}
+
+.error-lens-header {
+  @apply flex items-center gap-2 mb-2 text-error font-medium;
+}
+
+/* Command palette */
+.command-palette-overlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-[15vh];
+}
+
+.command-palette {
+  @apply w-full max-w-2xl bg-panel border border-border rounded-2xl shadow-2xl overflow-hidden;
+  @apply animate-slide-in;
+}
+
+/* Tooltip */
+.tooltip {
+  @apply absolute z-50 px-2 py-1 text-xs bg-card border border-border rounded-lg shadow-lg;
+  @apply animate-fade-in;
+}
+
+/* Context menu */
+.context-menu {
+  @apply absolute z-50 min-w-[180px] bg-panel border border-border rounded-xl shadow-xl py-1;
+  @apply animate-fade-in;
+}
+
+.context-menu-item {
+  @apply flex items-center gap-2 px-3 py-2 text-sm cursor-pointer transition-all-200;
+  @apply hover:bg-white/5;
+}
+
+.context-menu-item.danger {
+  @apply text-error hover:bg-error/10;
+}
+
+/* Resizer */
+.resizer {
+  @apply w-1 cursor-col-resize bg-transparent hover:bg-primary/30 transition-all-200;
+}
+
+.resizer-horizontal {
+  @apply h-1 cursor-row-resize bg-transparent hover:bg-primary/30 transition-all-200;
+}
