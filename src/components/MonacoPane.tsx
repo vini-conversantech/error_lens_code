@@ -38,14 +38,21 @@ self.MonacoEnvironment = {
 export default function MonacoPane() {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
   const { tabs, activeTabId, updateTabContent, setSelectedText, getActiveTab } = useEditorStore()
-  const { workspacePath } = useAppStore()
+  const { workspacePath, settings } = useAppStore()
 
   const activeTab = tabs.find(t => t.id === activeTabId)
+
+  // Update theme when settings change
+  useEffect(() => {
+    if (editorRef.current) {
+      monaco.editor.setTheme(settings.theme)
+    }
+  }, [settings.theme])
 
   const handleEditorMount: OnMount = useCallback((editor, monacoInstance) => {
     editorRef.current = editor
 
-    // Define custom theme
+    // Define custom themes
     monacoInstance.editor.defineTheme('errorlens-dark', {
       base: 'vs-dark',
       inherit: true,
@@ -87,7 +94,17 @@ export default function MonacoPane() {
       }
     })
 
-    monacoInstance.editor.setTheme('errorlens-dark')
+    monacoInstance.editor.defineTheme('amoled', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#000000',
+        'editorGutter.background': '#000000',
+      }
+    })
+
+    monacoInstance.editor.setTheme(settings.theme)
 
     // Listen for selection changes
     editor.onDidChangeCursorSelection((e) => {
@@ -106,13 +123,19 @@ export default function MonacoPane() {
     })
 
     // Add keyboard shortcuts
-    editor.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.KeyS, () => {
+    editor.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.KeyS, async () => {
       // Trigger save
       const tab = getActiveTab()
-      if (tab && tab.isDirty) {
-        window.electronAPI.writeFile(tab.path, tab.content).then(() => {
-          useEditorStore.getState().updateTabDirty(tab.id, false)
-        })
+      if (tab) {
+        if (settings.formatOnSave) {
+          await editor.getAction('editor.action.formatDocument')?.run()
+        }
+        
+        if (tab.isDirty) {
+          window.electronAPI.writeFile(tab.path, editor.getValue()).then(() => {
+            useEditorStore.getState().updateTabDirty(tab.id, false)
+          })
+        }
       }
     })
 
@@ -131,7 +154,7 @@ export default function MonacoPane() {
         }))
       }
     })
-  }, [setSelectedText])
+  }, [setSelectedText, settings.theme, settings.formatOnSave, getActiveTab])
 
   const handleEditorChange: OnChange = useCallback((value) => {
     if (activeTabId && value !== undefined) {
@@ -141,15 +164,20 @@ export default function MonacoPane() {
 
   // Auto-save with debounce
   useEffect(() => {
-    if (!activeTab?.isDirty) return
+    if (!activeTab?.isDirty || !settings.autoSave) return
 
-    const timeout = setTimeout(() => {
-      window.electronAPI.writeFile(activeTab.path, activeTab.content)
+    const timeout = setTimeout(async () => {
+      if (settings.formatOnSave && editorRef.current) {
+        await editorRef.current.getAction('editor.action.formatDocument')?.run()
+      }
+      
+      const content = editorRef.current?.getValue() || activeTab.content
+      window.electronAPI.writeFile(activeTab.path, content)
       useEditorStore.getState().updateTabDirty(activeTab.id, false)
     }, 2000)
 
     return () => clearTimeout(timeout)
-  }, [activeTab?.content])
+  }, [activeTab?.content, settings.autoSave, settings.formatOnSave])
 
   if (!activeTab) {
     return (
@@ -180,22 +208,22 @@ export default function MonacoPane() {
         value={activeTab.content}
         onChange={handleEditorChange}
         onMount={handleEditorMount}
-        theme="errorlens-dark"
+        theme={settings.theme}
         options={{
-          fontSize: 14,
-          fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
+          fontSize: settings.fontSize,
+          fontFamily: settings.fontFamily,
           fontLigatures: true,
-          lineHeight: 22,
+          lineHeight: settings.fontSize * 1.5,
           padding: { top: 16, bottom: 16 },
           minimap: {
-            enabled: true,
+            enabled: settings.minimap,
             scale: 1,
             showSlider: 'mouseover'
           },
           scrollBeyondLastLine: false,
           smoothScrolling: true,
           cursorBlinking: 'smooth',
-          cursorSmoothCaretAnimation: 'on',
+          cursorSmoothCaretAnimation: settings.cursorSmoothCaretAnimation,
           renderLineHighlight: 'all',
           renderWhitespace: 'selection',
           bracketPairColorization: { enabled: true },
@@ -214,12 +242,13 @@ export default function MonacoPane() {
             comments: false,
             strings: true
           },
-          wordWrap: 'off',
+          wordWrap: settings.wordWrap,
           automaticLayout: true,
-          tabSize: 2,
+          tabSize: settings.tabSize,
           insertSpaces: true,
           formatOnPaste: true,
           formatOnType: true,
+          lineNumbers: settings.lineNumbers,
         }}
       />
     </div>

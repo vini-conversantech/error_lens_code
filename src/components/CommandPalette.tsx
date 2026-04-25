@@ -17,7 +17,7 @@ export default function CommandPalette({ onClose }: { onClose: () => void }) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   
-  const { setRightSidebarTab, toggleRightSidebar, setSettingsOpen, workspacePath } = useAppStore()
+  const { setRightSidebarTab, toggleRightSidebar, setSettingsOpen, setSettingsTab, workspacePath } = useAppStore()
   const { tabs, addTab } = useEditorStore()
   const { createSession } = useChatStore()
   
@@ -145,6 +145,7 @@ export default function CommandPalette({ onClose }: { onClose: () => void }) {
       label: 'Open Settings',
       icon: Settings,
       action: () => {
+        setSettingsTab('customizations')
         setSettingsOpen(true)
         onClose()
       },

@@ -107,8 +107,19 @@ function App() {
       }
     }
     
+    // Refresh git status on window focus
+    const handleFocus = () => {
+      const { workspacePath } = useAppStore.getState()
+      if (workspacePath) loadGitStatus(workspacePath)
+    }
+    
+    window.addEventListener('focus', handleFocus)
     window.addEventListener('keydown', handleKeyDown)
-    cleanups.push(() => window.removeEventListener('keydown', handleKeyDown))
+    
+    cleanups.push(() => {
+      window.removeEventListener('focus', handleFocus)
+      window.removeEventListener('keydown', handleKeyDown)
+    })
     
     return () => {
       cleanups.forEach(cleanup => cleanup())
@@ -177,15 +188,17 @@ function App() {
   
   const handleSave = useCallback(async () => {
     const activeTab = getActiveTab()
+    const { workspacePath } = useAppStore.getState()
     if (activeTab && activeTab.isDirty) {
       try {
         await window.electronAPI.writeFile(activeTab.path, activeTab.content)
         useEditorStore.getState().updateTabDirty(activeTab.id, false)
+        if (workspacePath) loadGitStatus(workspacePath)
       } catch (error) {
         console.error('Failed to save file:', error)
       }
     }
-  }, [])
+  }, [getActiveTab])
   
   const showTrustDialog = workspacePath && !trustedWorkspaces.includes(workspacePath)
   

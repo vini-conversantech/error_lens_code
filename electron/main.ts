@@ -379,6 +379,7 @@ ipcMain.handle('git:status', async (_, repoPath: string) => {
     const status = await git.status()
     return { 
       success: true, 
+      isRepo: true,
       current: status.current,
       tracking: status.tracking,
       staged: status.staged,

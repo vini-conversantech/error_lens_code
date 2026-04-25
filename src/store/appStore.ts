@@ -46,12 +46,27 @@ interface AppState {
   problemsOpen: boolean
   commandPaletteOpen: boolean
   settingsOpen: boolean
+  activeSettingsTab: 'agent' | 'notifications' | 'customizations' | 'browser' | 'tab' | 'editor' | 'account' | 'legal' | 'feedback'
   onboarded: boolean
   trustedWorkspaces: string[]
   
   // Git
   gitStatus: GitStatus | null
   
+  // Settings
+  settings: {
+    theme: string
+    fontSize: number
+    fontFamily: string
+    tabSize: number
+    wordWrap: 'on' | 'off'
+    minimap: boolean
+    lineNumbers: 'on' | 'off'
+    cursorSmoothCaretAnimation: 'on' | 'off'
+    formatOnSave: boolean
+    autoSave: boolean
+  }
+
   // Actions
   setWorkspace: (path: string | null, name: string | null) => void
   setFiles: (files: FileItem[] | ((files: FileItem[]) => FileItem[])) => void
@@ -63,9 +78,11 @@ interface AppState {
   setProblemsOpen: (open: boolean) => void
   setCommandPaletteOpen: (open: boolean) => void
   setSettingsOpen: (open: boolean) => void
+  setSettingsTab: (tab: 'agent' | 'notifications' | 'customizations' | 'browser' | 'tab' | 'editor' | 'account' | 'legal' | 'feedback') => void
   setOnboarded: (onboarded: boolean) => void
   trustWorkspace: (path: string) => void
   setGitStatus: (status: GitStatus | null) => void
+  updateSettings: (settings: Partial<AppState['settings']>) => void
 }
 
 export const useAppStore = create<AppState>()(
@@ -82,10 +99,24 @@ export const useAppStore = create<AppState>()(
       problemsOpen: true,
       commandPaletteOpen: false,
       settingsOpen: false,
+      activeSettingsTab: 'customizations',
       onboarded: false,
       trustedWorkspaces: [],
       gitStatus: null,
       
+      settings: {
+        theme: 'errorlens-dark',
+        fontSize: 14,
+        fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
+        tabSize: 2,
+        wordWrap: 'off',
+        minimap: true,
+        lineNumbers: 'on',
+        cursorSmoothCaretAnimation: 'on',
+        formatOnSave: true,
+        autoSave: true,
+      },
+
       // Actions
       setWorkspace: (path, name) => set({ workspacePath: path, workspaceName: name }),
       setFiles: (files) => set((state) => ({ 
@@ -99,6 +130,7 @@ export const useAppStore = create<AppState>()(
       setProblemsOpen: (open) => set({ problemsOpen: open }),
       setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
       setSettingsOpen: (open) => set({ settingsOpen: open }),
+      setSettingsTab: (tab) => set({ activeSettingsTab: tab }),
       setOnboarded: (onboarded) => set({ onboarded }),
       trustWorkspace: (path) => set((state) => ({ 
         trustedWorkspaces: state.trustedWorkspaces.includes(path) 
@@ -106,6 +138,9 @@ export const useAppStore = create<AppState>()(
           : [...state.trustedWorkspaces, path] 
       })),
       setGitStatus: (status) => set({ gitStatus: status }),
+      updateSettings: (newSettings) => set((state) => ({ 
+        settings: { ...state.settings, ...newSettings } 
+      })),
     }),
     {
       name: 'errorlens-app-storage',
@@ -114,6 +149,7 @@ export const useAppStore = create<AppState>()(
         workspaceName: state.workspaceName,
         onboarded: state.onboarded,
         trustedWorkspaces: state.trustedWorkspaces,
+        settings: state.settings,
       }),
     }
   )

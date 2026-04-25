@@ -11,19 +11,29 @@ import {
 import { useAppStore } from '../store/appStore'
 
 export default function ActivityBar() {
-  const { toggleLeftSidebar, setSettingsOpen } = useAppStore()
+  const { toggleLeftSidebar, setSettingsOpen, setSettingsTab, setRightSidebarTab, toggleRightSidebar, rightSidebarOpen } = useAppStore()
+
+  const handleOpenSettings = (tab: 'account' | 'customizations') => {
+    setSettingsTab(tab)
+    setSettingsOpen(true)
+  }
+
+  const handleGitClick = () => {
+    setRightSidebarTab('changes')
+    if (!rightSidebarOpen) toggleRightSidebar()
+  }
 
   const topIcons = [
-    { id: 'explorer', icon: VscFiles, label: 'Explorer', active: true },
+    { id: 'explorer', icon: VscFiles, label: 'Explorer', active: true, onClick: toggleLeftSidebar },
     { id: 'search', icon: VscSearch, label: 'Search' },
-    { id: 'git', icon: VscSourceControl, label: 'Source Control' },
+    { id: 'git', icon: VscSourceControl, label: 'Source Control', onClick: handleGitClick },
     { id: 'debug', icon: VscDebugAlt, label: 'Run and Debug' },
     { id: 'extensions', icon: VscExtensions, label: 'Extensions' },
   ]
 
   const bottomIcons = [
-    { id: 'account', icon: VscAccount, label: 'Account' },
-    { id: 'settings', icon: VscSettingsGear, label: 'Settings', onClick: () => setSettingsOpen(true) },
+    { id: 'account', icon: VscAccount, label: 'Account', onClick: () => handleOpenSettings('account') },
+    { id: 'settings', icon: VscSettingsGear, label: 'Settings', onClick: () => handleOpenSettings('customizations') },
   ]
 
   return (
@@ -38,7 +48,7 @@ export default function ActivityBar() {
                 ? 'text-text' 
                 : 'text-muted hover:text-text'
             }`}
-            onClick={item.id === 'explorer' ? toggleLeftSidebar : undefined}
+            onClick={item.onClick}
           >
             {item.active && (
               <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary" />

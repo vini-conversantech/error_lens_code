@@ -28,7 +28,13 @@ interface TopbarProps {
 }
 
 export default function Topbar({ onOpenFolder, onSave }: TopbarProps) {
-  const { workspaceName, setRightSidebarTab, toggleRightSidebar, leftSidebarOpen, rightSidebarOpen, terminalOpen, problemsOpen, gitStatus } = useAppStore()
+  const { workspaceName, setRightSidebarTab, toggleRightSidebar, leftSidebarOpen, rightSidebarOpen, terminalOpen, problemsOpen, gitStatus, setSettingsOpen, setSettingsTab } = useAppStore()
+
+  const handleOpenSettings = (tab: 'account' | 'customizations') => {
+    setSettingsTab(tab)
+    setSettingsOpen(true)
+  }
+
   const { getActiveTab } = useEditorStore()
   const { createSession, addMessage, setStreaming, setStreamingContent, isStreaming } = useChatStore()
   const [showModelDropdown, setShowModelDropdown] = useState(false)
@@ -194,15 +200,18 @@ export default function Topbar({ onOpenFolder, onSave }: TopbarProps) {
             <MonitorPlay className="w-4 h-4" />
           </button>
           <button
-            onClick={() => useAppStore.getState().setSettingsOpen(true)}
+            onClick={() => handleOpenSettings('customizations')}
             className="text-muted hover:text-white transition-colors"
           >
             <Settings className="w-4 h-4" />
           </button>
 
           {/* User profile bubble */}
-          <button className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center ml-1 object-cover overflow-hidden">
-            <span className="text-xs text-white font-bold leading-none">R</span>
+          <button
+            onClick={() => handleOpenSettings('account')}
+            className="w-6 h-6 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center ml-1 object-cover overflow-hidden"
+          >
+            <span className="text-xs text-white font-bold leading-none uppercase">V</span>
           </button>
         </div>
       </div>
