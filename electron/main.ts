@@ -522,6 +522,41 @@ ipcMain.handle('terminal:execute', async (_, cwd: string, command: string) => {
   }
 })
 
+ipcMain.handle('ai:chatRequest', async (_, url: string, options: any) => {
+  try {
+    console.log(`[AI Request] Calling URL: ${url}`);
+    log.info(`[AI Proxy] Request to: ${url}`)
+    
+    // Use Electron's net.fetch for better desktop compatibility
+    const response = await net.fetch(url, {
+        method: 'POST',
+        headers: {
+          ...options.headers,
+          'User-Agent': 'ErrorLens/1.0.0'
+        },
+        body: JSON.stringify(options.body)
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      try {
+        const errorJson = JSON.parse(errorText)
+        log.error('[AI Proxy] Error Response:', errorJson)
+        return { success: false, error: errorJson.error?.message || `API Error: ${response.status}` }
+      } catch {
+        log.error('[AI Proxy] Error Response (text):', errorText)
+        return { success: false, error: `API Error: ${response.status} - ${errorText.slice(0, 100)}` }
+      }
+    }
+
+    const data = await response.json()
+    return { success: true, data }
+  } catch (error: any) {
+    log.error('AI Request error:', error)
+    return { success: false, error: error.message }
+  }
+})
+
 // App
 ipcMain.handle('app:getPath', async (_, name: string) => {
   return app.getPath(name as any)

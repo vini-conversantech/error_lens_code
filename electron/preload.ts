@@ -39,6 +39,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // App
   getPath: (name: string) => ipcRenderer.invoke('app:getPath', name),
   getVersion: () => ipcRenderer.invoke('app:getVersion'),
+  aiChatRequest: (url: string, options: any) => ipcRenderer.invoke('ai:chatRequest', url, options),
 
   // Window
   minimize: () => ipcRenderer.invoke('window:minimize'),
@@ -128,6 +129,7 @@ export interface ElectronAPI {
   // App
   getPath: (name: string) => Promise<string>
   getVersion: () => Promise<string>
+  aiChatRequest: (url: string, options: any) => Promise<{ success: boolean; data?: any; error?: string }>
 
   // Window
   minimize: () => Promise<void>

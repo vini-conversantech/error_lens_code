@@ -1,6 +1,6 @@
 // AI Provider Types and Abstraction
 
-export type AIProvider = 'openai' | 'anthropic' | 'gemini' | 'ollama'
+export type AIProvider = 'openai' | 'anthropic' | 'gemini' | 'ollama' | 'openrouter'
 
 export interface AIModel {
   id: string
@@ -66,6 +66,15 @@ export const AI_MODELS: AIModel[] = [
   { id: 'llama2', name: 'Llama 2', provider: 'ollama', maxTokens: 4096, supportsStreaming: true },
   { id: 'codellama', name: 'Code Llama', provider: 'ollama', maxTokens: 16384, supportsStreaming: true },
   { id: 'mistral', name: 'Mistral', provider: 'ollama', maxTokens: 8192, supportsStreaming: true },
+  
+  // OpenRouter
+  { id: 'meta-llama/llama-3.1-405b-instruct', name: 'Llama 3.1 405B', provider: 'openrouter', maxTokens: 128000, supportsStreaming: true },
+  { id: 'meta-llama/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', provider: 'openrouter', maxTokens: 128000, supportsStreaming: true },
+  { id: 'meta-llama/llama-3.1-8b-instruct', name: 'Llama 3.1 8B', provider: 'openrouter', maxTokens: 128000, supportsStreaming: true },
+  { id: 'google/gemini-pro-1.5', name: 'Gemini 1.5 Pro', provider: 'openrouter', maxTokens: 128000, supportsStreaming: true },
+  { id: 'google/gemini-flash-1.5', name: 'Gemini 1.5 Flash', provider: 'openrouter', maxTokens: 128000, supportsStreaming: true },
+  { id: 'openai/gpt-3.5-turbo', name: 'GPT-3.5 Turbo (OR)', provider: 'openrouter', maxTokens: 4096, supportsStreaming: true },
+  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet (OR)', provider: 'openrouter', maxTokens: 128000, supportsStreaming: true },
 ]
 
 export function getModelsByProvider(provider: AIProvider): AIModel[] {
@@ -82,6 +91,7 @@ const API_KEYS = {
   anthropic: 'ai_provider_anthropic_key',
   gemini: 'ai_provider_gemini_key',
   ollama: 'ai_provider_ollama_endpoint',
+  openrouter: 'ai_provider_openrouter_key',
 }
 
 export async function getAPIKey(provider: AIProvider): Promise<string | null> {

@@ -18,7 +18,8 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
     openai: { apiKey: '', model: 'gpt-4o' },
     anthropic: { apiKey: '', model: 'claude-3-5-sonnet-20241022' },
     gemini: { apiKey: '', model: 'gemini-1.5-pro' },
-    ollama: { apiUrl: 'http://localhost:11434', model: 'llama2', apiKey: '' }
+    ollama: { apiUrl: 'http://localhost:11434', model: 'llama2', apiKey: '' },
+    openrouter: { apiKey: '', model: 'meta-llama/llama-3.1-405b-instruct' }
   })
   const [selectedProvider, setSelectedProvider] = useState<AIProvider>('openai')
   const [saving, setSaving] = useState(false)
@@ -124,6 +125,7 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
     { id: 'openai', name: 'OpenAI', description: 'GPT-4, GPT-4o, GPT-4o mini' },
     { id: 'anthropic', name: 'Anthropic', description: 'Claude 3.5 Sonnet, Opus' },
     { id: 'gemini', name: 'Google Gemini', description: 'Gemini 1.5 Pro, Flash' },
+    { id: 'openrouter', name: 'OpenRouter', description: 'Universal API (Llama 3.1, Claude 3, etc.)' },
     { id: 'ollama', name: 'Ollama', description: 'Local models (Llama, Mistral, etc.)' }
   ]
 
@@ -518,15 +520,28 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
                                 ...prev,
                                 [selectedProvider]: { ...prev[selectedProvider], apiKey: e.target.value }
                               }))}
-                              placeholder={selectedProvider === 'openai' ? 'sk-...' : selectedProvider === 'anthropic' ? 'sk-ant-...' : 'AIza...'}
+                              placeholder={
+                                selectedProvider === 'openai' ? 'sk-...' : 
+                                selectedProvider === 'anthropic' ? 'sk-ant-...' : 
+                                selectedProvider === 'openrouter' ? 'sk-or-v1-...' :
+                                'AIza...'
+                              }
                               className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-4 text-sm text-text outline-none focus:border-primary/50 transition-all font-mono"
                             />
                           </div>
                           <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 flex gap-4">
                             <AlertCircle className="w-5 h-5 text-primary shrink-0" />
-                            <p className="text-xs text-muted leading-relaxed">
-                              Your API key is stored securely on your local filesystem. It is never uploaded to our servers, only to the selected provider when you make requests.
-                            </p>
+                            <div className="text-xs text-muted leading-relaxed">
+                              {selectedProvider === 'openrouter' ? (
+                                <p>
+                                  <strong>OpenRouter</strong> provides access to a vast array of models including Llama 3.1, Claude 3.5, and more through a single unified API. Use your OpenRouter key to test multiple agents.
+                                </p>
+                              ) : (
+                                <p>
+                                  Your API key is stored securely on your local filesystem. It is never uploaded to our servers, only to the selected provider when you make requests.
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )}

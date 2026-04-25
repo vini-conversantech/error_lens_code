@@ -20,6 +20,8 @@ interface ChatState {
   currentSessionId: string | null
   isStreaming: boolean
   streamingContent: string
+  selectedModel: string
+  selectedAgent: string
   
   // Actions
   createSession: (projectId?: number) => ChatSession
@@ -29,6 +31,8 @@ interface ChatState {
   deleteSession: (id: string) => void
   setStreaming: (isStreaming: boolean) => void
   setStreamingContent: (content: string) => void
+  setSelectedModel: (model: string) => void
+  setSelectedAgent: (agent: string) => void
   getCurrentSession: () => ChatSession | null
 }
 
@@ -44,6 +48,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   currentSessionId: null,
   isStreaming: false,
   streamingContent: '',
+  selectedModel: 'gpt-4o',
+  selectedAgent: 'Architect',
   
   createSession: (projectId) => {
     const session: ChatSession = {
@@ -107,6 +113,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setStreaming: (isStreaming) => set({ isStreaming }),
   
   setStreamingContent: (content) => set({ streamingContent: content }),
+  
+  setSelectedModel: (model) => set({ selectedModel: model }),
+  
+  setSelectedAgent: (agent) => set({ selectedAgent: agent }),
   
   getCurrentSession: () => {
     const state = get()
